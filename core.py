@@ -31,6 +31,7 @@ class Game:
         self.flags_left = self.bombs
         self.unprobed_to_clear = self.w * self.h - self.bombs
         self.state = GameState.INITIALIZED
+        self.probed_queue = []
 
     def in_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.w and 0 <= y < self.h
@@ -110,6 +111,7 @@ class Game:
                 continue
 
             pc.state = CellState.PROBED
+            self.probed_queue.append((px, py))
 
             if pc.bomb:
                 self._gameover(last_boom=(px, py))
@@ -138,6 +140,7 @@ class Game:
         self.state = GameState.CLEAR
 
     def board_state(self):
+        # Dùng cho debug
         out = []
         for y in range(self.h):
             row = []
