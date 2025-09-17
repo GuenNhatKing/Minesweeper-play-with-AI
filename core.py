@@ -114,7 +114,7 @@ class Game:
             self.probed_queue.append((px, py))
 
             if pc.bomb:
-                self._gameover(last_boom=(px, py))
+                self._gameover()
                 return None
 
             self.unprobed_to_clear -= 1
@@ -164,7 +164,7 @@ class Game:
         return out
     
 # Testing
-g = Game(8, 8, 10)
+g = Game(8, 8, 62)
 print(g.state)
 for row in g.board_state():
     print(row)
