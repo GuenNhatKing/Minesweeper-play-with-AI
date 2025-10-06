@@ -186,22 +186,22 @@ class Game:
         return out
     
 # Testing
-print("chon level: easy, medium, hard, custom")
-level = input("Nhap level: ")
-if level.strip().lower() == 'custom':
-    rows = int(input("Nhap rows: "))
-    cols = int(input("Nhap cols: "))
-    mines = int(input("Nhap mines: "))
-    rows, cols, mines = parse_level(level, (rows, cols, mines))
-else:
-    rows, cols, mines = parse_level(level)
+# print("chon level: easy, medium, hard, custom")
+# level = input("Nhap level: ")
+# if level.strip().lower() == 'custom':
+#     rows = int(input("Nhap rows: "))
+#     cols = int(input("Nhap cols: "))
+#     mines = int(input("Nhap mines: "))
+#     rows, cols, mines = parse_level(level, (rows, cols, mines))
+# else:
+#     rows, cols, mines = parse_level(level)
 
-g = Game(rows, cols, mines)
-while g.state != GameState.CLEAR and g.state != GameState.GAMEOVER:
-    x = int(input('Nhap x: '))
-    y = int(input('Nhap y: '))
-    right = int(input('Right click?(0/1): '))
-    g.click(x, y, False if right == 0 else True)
-    print(g.state)
-    for row in g.board_state():
-        print(row)
+# g = Game(rows, cols, mines)
+# while g.state != GameState.CLEAR and g.state != GameState.GAMEOVER:
+#     x = int(input('Nhap x: '))
+#     y = int(input('Nhap y: '))
+#     right = int(input('Right click?(0/1): '))
+#     g.click(x, y, False if right == 0 else True)
+#     print(g.state)
+#     for row in g.board_state():
+#         print(row)
