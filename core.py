@@ -13,28 +13,36 @@ class GameState(Enum):
     GAMEOVER = "gameover"
 
 class Cell:
-    def __init__(self, bomb: bool = False, state: CellState = CellState.UNPROBED):
-        self.bomb = bomb
+    def __init__(self, mine: bool = False, state: CellState = CellState.UNPROBED):
+        self.mine = mine
         self.state = state
     
 class Game:
-    def __init__(self, h: int, w: int, bombs: int):
-        self.reinit(h, w, bombs)
+    def __init__(self, h: int, w: int, mines: int):
+        self.reinit(h, w, mines)
 
-    def reinit(self, h: int, w: int, bombs: int):
+    def reinit(self, h: int, w: int, mines: int):
         self.h = int(h)
         self.w = int(w)
-        max_bombs = self.w * self.h - 1
-        self.bombs = max(0, min(int(bombs), max_bombs))
+        max_mines = self.w * self.h - 1
+        self.mines = max(0, min(int(mines), max_mines))
         self.field: list[list[Cell]] = [[Cell() for _ in range(self.w)] for _ in range(self.h)]
 
-        self.flags_left = self.bombs
-        self.unprobed_to_clear = self.w * self.h - self.bombs
+        self.flags_left = self.mines
+        self.unprobed_to_clear = self.w * self.h - self.mines
         self.state = GameState.INITIALIZED
         self.probed_queue = []
 
+    def get_size(self):
+        return (self.w, self.h)
+
     def in_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.w and 0 <= y < self.h
+    
+    def get_cell_state(self, x, y):
+        if self.in_bounds(x, y):
+            return self.field[y][x].state
+        return None
 
     def neighbors(self, x: int, y: int):
         for ny in range(y - 1, y + 2):
@@ -44,17 +52,17 @@ class Game:
                 if self.in_bounds(nx, ny):
                     yield nx, ny, self.field[ny][nx]
 
-    def adjacent_bombs(self, x: int, y: int) -> int:
-        return sum(1 for _, _, c in self.neighbors(x, y) if c.bomb)
+    def adjacent_mines(self, x: int, y: int) -> int:
+        return sum(1 for _, _, c in self.neighbors(x, y) if c.mine)
 
-    def _init_bombs_after_first_click(self, sx: int, sy: int):
+    def _init_mines_after_first_click(self, sx: int, sy: int):
         if self.state != GameState.INITIALIZED:
             return
         total = self.w * self.h
         first_idx = sy * self.w + sx
 
         cc = total - 1
-        bc = self.bombs
+        bc = self.mines
         offset = 0
         while bc > 0:
             if offset == first_idx:
@@ -62,7 +70,7 @@ class Game:
             if random.randrange(cc) < bc:
                 y = offset // self.w
                 x = offset % self.w
-                self.field[y][x].bomb = True
+                self.field[y][x].mine = True
                 bc -= 1
             offset += 1
             cc -= 1
@@ -99,7 +107,7 @@ class Game:
             return None
 
         if self.state == GameState.INITIALIZED:
-            self._init_bombs_after_first_click(x, y)
+            self._init_mines_after_first_click(x, y)
 
         # Mở lan nếu không có mìn xung quanh
         stack = [(x, y)]
@@ -113,12 +121,12 @@ class Game:
             pc.state = CellState.PROBED
             self.probed_queue.append((px, py))
 
-            if pc.bomb:
+            if pc.mine:
                 self._gameover()
                 return None
 
             self.unprobed_to_clear -= 1
-            n = self.adjacent_bombs(px, py)
+            n = self.adjacent_mines(px, py)
             if n == 0:
                 for nx, ny, nc in self.neighbors(px, py):
                     if nc.state == CellState.UNPROBED:
@@ -135,9 +143,11 @@ class Game:
 
     def _gameover(self):
         self.state = GameState.GAMEOVER
+        print("GAMEOVER")
 
     def _clear(self):
         self.state = GameState.CLEAR
+        print("CLEAR")
 
     def board_state(self):
         # Dùng cho debug
@@ -151,7 +161,7 @@ class Game:
                 elif c.state == CellState.UNPROBED:
                     row.append("U")
                 elif c.state == CellState.PROBED:
-                    row.append(self.adjacent_bombs(x, y))
+                    row.append(self.adjacent_mines(x, y))
                 else:
                     row.append("?")
             out.append(row)
@@ -159,20 +169,20 @@ class Game:
         if self.state == GameState.GAMEOVER:
             for y in range(self.h):
                 for x in range(self.w):
-                    if self.field[y][x].bomb and self.field[y][x] != "F":
+                    if self.field[y][x].mine and self.field[y][x] != "F":
                         out[y][x] = "*"
         return out
     
 # Testing
-g = Game(8, 8, 62)
-print(g.state)
-for row in g.board_state():
-    print(row)
-while g.state != GameState.CLEAR and g.state != GameState.GAMEOVER:
-    x = int(input('Nhap x: '))
-    y = int(input('Nhap y: '))
-    right = int(input('Right click?(0/1): '))
-    g.click(x, y, False if right == 0 else True)
-    print(g.state)
-    for row in g.board_state():
-        print(row)
+# g = Game(8, 8, 62)
+# print(g.state)
+# for row in g.board_state():
+#     print(row)
+# while g.state != GameState.CLEAR and g.state != GameState.GAMEOVER:
+#     x = int(input('Nhap x: '))
+#     y = int(input('Nhap y: '))
+#     right = int(input('Right click?(0/1): '))
+#     g.click(x, y, False if right == 0 else True)
+#     print(g.state)
+#     for row in g.board_state():
+#         print(row)
