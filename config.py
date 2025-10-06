@@ -18,7 +18,7 @@ STATUS_BAR = {
 BOARD = {
     'padding': 20,
     'bg_color': (108, 108, 108),
-    'gap': 4
+    'gap': 0
 }
 
 CELL = {

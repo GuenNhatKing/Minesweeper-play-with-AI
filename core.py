@@ -33,6 +33,17 @@ class Game:
         self.state = GameState.INITIALIZED
         self.probed_queue = []
 
+    def is_mine(self, x: int, y: int) -> bool:
+        return self.field[y][x].mine
+    
+    def is_flagged(self, x: int, y: int) -> bool:
+        return self.field[y][x].state == CellState.FLAGGED
+    
+    def is_exploded_mine(self, x: int, y: int) -> bool:
+        if self.probed_queue:
+            return self.probed_queue[-1] == (x, y)
+        return 0
+
     def get_size(self):
         return (self.w, self.h)
 

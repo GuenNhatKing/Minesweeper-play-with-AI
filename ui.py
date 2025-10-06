@@ -1,6 +1,29 @@
 import pygame
 from config import *
-from core import Game, CellState
+from core import Game, CellState, GameState
+
+numbers = {}
+for n in range(1, 9):
+    img = pygame.image.load(f'assets/icons/Minesweeper_tile_number_{n}.png')
+    numbers[n] = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_flag.png')
+flag = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_tile_probed.png')
+tile_probed = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_tile_unprobed.png')
+tile_unprobed = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_mine.png')
+mine = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_mine_red.png')
+mine_red = pygame.transform.scale(img, (CELL['size'], CELL['size']))
+
+img = pygame.image.load('assets/icons/Minesweeper_not_mine.png')
+not_mine = pygame.transform.scale(img, (CELL['size'], CELL['size']))
 
 # Calculate functions
 def calc_windows_size(game: Game):
@@ -74,12 +97,40 @@ def draw_board(windows: pygame.Surface, game: Game):
 
             if state == CellState.UNPROBED:
                 pygame.draw.rect(windows, CELL['unprobed_color'], cell_rect)
+                windows.blit(tile_unprobed, cell_rect)
             elif state == CellState.FLAGGED:
                 pygame.draw.rect(windows, CELL['unprobed_color'], cell_rect)
+                windows.blit(flag, cell_rect)
             elif state == CellState.PROBED:
                 pygame.draw.rect(windows, CELL['probed_color'], cell_rect)
-                
+                adj = game.adjacent_mines(j, i)
+                if 1 <= adj <= 8:
+                    windows.blit(numbers[adj], cell_rect)
+                if adj == 0:
+                    windows.blit(tile_probed, cell_rect)
         offset_y += CELL['size'] + BOARD['gap']
+    
+    offset_y = board_offset_y + BOARD['gap']
+    if game.state == GameState.GAMEOVER:
+        for y in range(h):
+            offset_x = board_offset_x + BOARD['gap']
+            for x in range(w):
+                cell_rect = pygame.Rect(offset_x, offset_y, CELL['size'], CELL['size'])
+                offset_x += CELL['size'] + BOARD['gap']
+
+                is_mine = game.is_mine(x, y)
+                is_flagged = game.is_flagged(x, y)
+                is_exploded_mine = game.is_exploded_mine(x, y)
+                if is_mine and not is_flagged:
+                    windows.blit(mine, cell_rect)
+                
+                if not is_mine and is_flagged:
+                    windows.blit(not_mine, cell_rect)
+
+                if is_mine and is_exploded_mine:
+                    windows.blit(mine_red, cell_rect)
+                
+            offset_y += CELL['size'] + BOARD['gap']      
 
 # Start pygame
 def start_ui(game: Game):
