@@ -32,7 +32,6 @@ class Game:
         self.state = GameState.INITIALIZED
         self.probed_queue = []
         self.timer = Timer()
-        self.timer.start()
 
     def reset(self, h: int, w: int, mines: int):
         self.h = int(h)
@@ -46,7 +45,6 @@ class Game:
         self.state = GameState.INITIALIZED
         self.probed_queue = []
         self.timer.reset()
-        self.timer.start()
 
     def is_mine(self, x: int, y: int) -> bool:
         return self.field[y][x].mine
@@ -102,6 +100,7 @@ class Game:
             cc -= 1
 
         self.state = GameState.PLAYING
+        self.timer.start()
 
     def flag(self, x: int, y: int):
         if self.state in (GameState.CLEAR, GameState.GAMEOVER):
