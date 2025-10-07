@@ -25,7 +25,7 @@ class Game_UI:
         self.cell_size = CELL['size']
     
     def reset_game(self):
-        self.game.reinit(self.rows, self.cols, self.mines)
+        self.game.reset(self.rows, self.cols, self.mines)
 
     def calc_windows_size(self):
         w, h = self.game.get_size()

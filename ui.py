@@ -62,7 +62,7 @@ class UI_Draw:
         self.canvas.blit(mine_counter_text, mine_counter_text_rect)
 
         timer_font = pygame.font.Font(TIMER['font'], min(TIMER['font-size'], STATUS_BAR['height'] - 2 * STATUS_BAR['padding-horizontal']))
-        timer_text = timer_font.render(f'{self.game.flags_left:03d}', True, TIMER['color'], TIMER['bg-color'])
+        timer_text = timer_font.render(f'{self.game.timer.get_time():03d}', True, TIMER['color'], TIMER['bg-color'])
 
         timer_rect = pygame.Rect(width - STATUS_BAR['padding-vertical'] - TIMER['width'], STATUS_BAR['padding-horizontal'], TIMER['width'], STATUS_BAR['height'] - 2 * STATUS_BAR['padding-horizontal'])
         pygame.draw.rect(self.canvas, TIMER['bg-color'], timer_rect)

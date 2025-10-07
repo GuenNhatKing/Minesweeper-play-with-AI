@@ -1,6 +1,7 @@
 from enum import Enum
 from levels import parse_level
 import random
+from timer import Timer
 
 class CellState(Enum):
     UNPROBED = "unprobed"
@@ -20,9 +21,6 @@ class Cell:
     
 class Game:
     def __init__(self, h: int, w: int, mines: int):
-        self.reinit(h, w, mines)
-
-    def reinit(self, h: int, w: int, mines: int):
         self.h = int(h)
         self.w = int(w)
         max_mines = self.w * self.h - 1
@@ -33,6 +31,22 @@ class Game:
         self.unprobed_to_clear = self.w * self.h - self.mines
         self.state = GameState.INITIALIZED
         self.probed_queue = []
+        self.timer = Timer()
+        self.timer.start()
+
+    def reset(self, h: int, w: int, mines: int):
+        self.h = int(h)
+        self.w = int(w)
+        max_mines = self.w * self.h - 1
+        self.mines = max(0, min(int(mines), max_mines))
+        self.field: list[list[Cell]] = [[Cell() for _ in range(self.w)] for _ in range(self.h)]
+
+        self.flags_left = self.mines
+        self.unprobed_to_clear = self.w * self.h - self.mines
+        self.state = GameState.INITIALIZED
+        self.probed_queue = []
+        self.timer.reset()
+        self.timer.start()
 
     def is_mine(self, x: int, y: int) -> bool:
         return self.field[y][x].mine
@@ -155,9 +169,11 @@ class Game:
 
     def _gameover(self):
         self.state = GameState.GAMEOVER
+        self.timer.stop()
 
     def _clear(self):
         self.state = GameState.CLEAR
+        self.timer.stop()
 
     def board_state(self):
         # Dùng cho debug
