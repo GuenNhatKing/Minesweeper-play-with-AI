@@ -155,11 +155,9 @@ class Game:
 
     def _gameover(self):
         self.state = GameState.GAMEOVER
-        print("GAMEOVER")
 
     def _clear(self):
         self.state = GameState.CLEAR
-        print("CLEAR")
 
     def board_state(self):
         # Dùng cho debug

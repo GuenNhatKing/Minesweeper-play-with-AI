@@ -28,7 +28,7 @@ CELL = {
 }
 
 MINE_COUNTER = {
-    'font': FONT['helvetica'],
+    'font': FONT['helvetica-bold'],
     'font-size': 28,
     'color': (255, 0, 0),
     'bg-color': (0, 0, 0),
@@ -36,22 +36,9 @@ MINE_COUNTER = {
 }
 
 TIMER = {
-    'font': FONT['helvetica'],
+    'font': FONT['helvetica-bold'],
     'font-size': 28,
     'color': (255, 0, 0),
     'bg-color': (0, 0, 0),
     'width': 60
-}
-
-LEVELS = {
-    # Beginner
-    "1": {"height": 9,  "width": 9,  "mines": 10},
-    # Easy
-    "2": {"height": 12, "width": 12, "mines": 20},
-    # Intermediate
-    "3": {"height": 16, "width": 16, "mines": 40},
-    # Hard
-    "4": {"height": 20, "width": 24, "mines": 80},
-    # Expert
-    "5": {"height": 16, "width": 30, "mines": 99},
 }
