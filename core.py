@@ -25,23 +25,30 @@ class Cell:
     
 class Game:
     def __init__(self, h: int, w: int, mines: int):
-        self.h = int(h)
-        self.w = int(w)
+        self.h = h
+        self.w = w
         max_mines = self.w * self.h - 1
         self.mines = max(0, min(int(mines), max_mines))
         self.field: list[list[Cell]] = [[Cell(state=CellState.UNPROBED) for _ in range(self.w)] for _ in range(self.h)]
-
         self.flags_left = self.mines
         self.unprobed_to_clear = self.w * self.h - self.mines
         self.state = GameState.INITIALIZED
         self.probed_queue = []
         self.timer = Timer()
 
-    def reset(self, h: int, w: int, mines: int):
-        self.h = int(h)
-        self.w = int(w)
+    def change_game_config(self, h: int, w: int, mines: int):
+        self.h = h
+        self.w = w
         max_mines = self.w * self.h - 1
         self.mines = max(0, min(int(mines), max_mines))
+        self.field: list[list[Cell]] = [[Cell(state=CellState.UNPROBED) for _ in range(self.w)] for _ in range(self.h)]
+        self.flags_left = self.mines
+        self.unprobed_to_clear = self.w * self.h - self.mines
+        self.state = GameState.INITIALIZED
+        self.probed_queue.clear()
+        self.timer.reset()
+
+    def reset(self):
         for j in range(self.h):
             for i in range(self.w):
                 self.field[j][i].mine = False
@@ -50,19 +57,25 @@ class Game:
         self.flags_left = self.mines
         self.unprobed_to_clear = self.w * self.h - self.mines
         self.state = GameState.INITIALIZED
-        self.probed_queue = []
+        self.probed_queue.clear()
         self.timer.reset()
 
     def is_mine(self, x: int, y: int) -> bool:
         return self.field[y][x].mine
     
-    def is_flagged(self, x: int, y: int) -> bool:
-        return self.field[y][x].state == CellState.FLAGGED
-    
     def is_exploded_mine(self, x: int, y: int) -> bool:
         if self.probed_queue:
             return self.probed_queue[-1] == (x, y)
         return False
+    
+    def is_probed(self, x: int, y: int) -> bool:
+        return self.field[y][x].state == CellState.PROBED
+    
+    def is_unprobed(self, x: int, y: int) -> bool:
+        return self.field[y][x].state == CellState.UNPROBED
+    
+    def is_flagged(self, x: int, y: int) -> bool:
+        return self.field[y][x].state == CellState.FLAGGED
 
     def get_size(self):
         return (self.w, self.h)
@@ -90,13 +103,13 @@ class Game:
                 yield x3, y3
 
     def adjacent_mines(self, x: int, y: int) -> int:
-        return sum(1 for i, j in self.neighbors(x, y) if self.get_cell(i, j).mine)
+        return sum(1 for i, j in self.neighbors(x, y) if self.is_mine(i, j))
     
     def adjacent_unprobed(self, x: int, y: int) -> int:
-        return sum(1 for i, j in self.neighbors(x, y) if self.get_cell(i, j).state == CellState.UNPROBED)
+        return sum(1 for i, j in self.neighbors(x, y) if self.is_unprobed(i, j))
 
     def adjacent_flagged(self, x: int, y: int) -> int:
-        return sum(1 for i, j in self.neighbors(x, y) if self.get_cell(i, j).state == CellState.FLAGGED)
+        return sum(1 for i, j in self.neighbors(x, y) if self.is_flagged(i, j))
 
     def _init_mines_after_first_click(self, sx: int, sy: int):
         if self.state != GameState.INITIALIZED:
@@ -216,24 +229,3 @@ class Game:
                     if self.field[y][x].mine and self.field[y][x].state != CellState.FLAGGED:
                         out[y][x] = "*"
         return out
-    
-# Testing
-# print("chon level: easy, medium, hard, custom")
-# level = input("Nhap level: ")
-# if level.strip().lower() == 'custom':
-#     rows = int(input("Nhap rows: "))
-#     cols = int(input("Nhap cols: "))
-#     mines = int(input("Nhap mines: "))
-#     rows, cols, mines = parse_level(level, (rows, cols, mines))
-# else:
-#     rows, cols, mines = parse_level(level)
-
-# g = Game(rows, cols, mines)
-# while g.state != GameState.CLEAR and g.state != GameState.GAMEOVER:
-#     x = int(input('Nhap x: '))
-#     y = int(input('Nhap y: '))
-#     right = int(input('Right click?(0/1): '))
-#     g.click(x, y, False if right == 0 else True)
-#     print(g.state)
-#     for row in g.board_state():
-#         print(row)

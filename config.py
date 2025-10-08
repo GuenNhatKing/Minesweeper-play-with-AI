@@ -42,3 +42,52 @@ TIMER = {
     'bg-color': (0, 0, 0),
     'width': 60
 }
+
+LEVEL_SELECT = {
+    'bg-color': (171, 171, 171),
+    'width': 400,
+    'height': 400
+}
+
+LEVEL_BUTTON = {
+    'font': FONT['helvetica-bold'],
+    'font-size': 20,
+    'color': (0, 0, 0),
+    'bg-color': (255, 255, 255),
+    'bg-color-hover': (238, 238, 238),
+    'bg-color-active': (190, 190, 190),
+    'width': 300,
+    'height': 44,
+    'margin': 8,
+    'radius': 8
+}
+
+LEVEL_OPTIONS = [
+    {'key': 'EASY', 'label': 'Easy (9x9, 10)'},
+    {'key': 'MEDIUM', 'label': 'Medium (16x16, 40)'},
+    {'key': 'HARD', 'label': 'Hard (30x16, 99)'},
+]
+
+MODE_SELECT = {
+    'bg-color': (171, 171, 171),
+    'width': 400,
+    'height': 300
+}
+
+MODE_BUTTON = {
+    'font': FONT['helvetica-bold'],
+    'font-size': 20,
+    'color': (0, 0, 0),
+    'bg-color': (255, 255, 255),
+    'bg-color-hover': (238, 238, 238),
+    'bg-color-active': (190, 190, 190),
+    'width': 220,
+    'height': 44,
+    'margin': 8,
+    'radius': 8
+}
+
+MODE_OPTIONS = [
+    {'key': 'PLAYER', 'label': 'Player'},
+    {'key': 'AI',      'label': 'AI'},
+]

@@ -36,16 +36,31 @@ class GameImage:
         return self.images[name]
 
 class UI_Draw:
-    def __init__(self, surface: pygame.Surface, game: Game):
+    def __init__(self):
         self.game_image = GameImage()
-        self.canvas = surface
-        self.game = game
+        self.canvas: pygame.Surface
+        self.game: Game
+
         self.in_board_left_clicked = False
         self.in_board_right_clicked = False
         self.clicked_unprobed_cell = False
         self.smiley_clicked = False
+        self.smiley_right_clicked = False
 
-    # Draw functions
+        self.level_ui = {
+            'rects': [],
+            'hover_idx': -1,
+        }
+        self.select_button_state = ['normal'] * len(LEVEL_OPTIONS)
+
+        self.mode_ui = {
+            'rects': [],
+            'hover_idx': -1,
+        }
+
+        self.mode_button_state = ['normal'] * len(MODE_OPTIONS)
+
+    # Draw gameplay
     def draw_status_bar(self):
         width = self.canvas.get_width()
         rect = pygame.Rect(0, 0, width, STATUS_BAR['height'])
@@ -84,7 +99,7 @@ class UI_Draw:
         else:
             self.canvas.blit(self.game_image.get_surface('smiley_happy'), smiley_button_rect)
         
-        if self.smiley_clicked:
+        if self.smiley_clicked or self.smiley_right_clicked:
             self.canvas.blit(self.game_image.get_surface('smiley_clicked'), smiley_button_rect)
 
     def draw_board(self): 
@@ -142,8 +157,108 @@ class UI_Draw:
                     if is_mine and is_exploded_mine:
                         self.canvas.blit(self.game_image.get_surface('mine_red'), cell_rect)
                     
-                offset_y += CELL['size'] + BOARD['gap']      
+                offset_y += CELL['size'] + BOARD['gap']  
 
+    def draw_gameplay(self):
+        self.canvas.fill(WINDOWS['bg_color'])    
+        self.draw_status_bar()
+        self.draw_board()
+
+    # Draw level select
+    def layout_level_buttons(self):
+        cw, ch = self.canvas.get_size()
+        panel_w = min(LEVEL_SELECT['width'], cw)
+        panel_h = min(LEVEL_SELECT['height'], ch)
+        panel_x = (cw - panel_w) // 2
+        panel_y = (ch - panel_h) // 2
+        self.level_ui['panel_rect'] = pygame.Rect(panel_x, panel_y, panel_w, panel_h)
+        bw = min(LEVEL_BUTTON['width'], panel_w - 2 * LEVEL_BUTTON['margin'])
+        bh = LEVEL_BUTTON['height']
+        gap_y = LEVEL_BUTTON['margin']
+        total_h = len(LEVEL_OPTIONS) * bh + (len(LEVEL_OPTIONS) - 1) * gap_y
+        start_y = panel_y + (panel_h - total_h) // 2
+        rects = []
+        for i in range(len(LEVEL_OPTIONS)):
+            rx = panel_x + (panel_w - bw) // 2
+            ry = start_y + i * (bh + gap_y)
+            rects.append(pygame.Rect(rx, ry, bw, bh))
+        self.level_ui['rects'] = rects
+
+    def draw_level_select(self):
+        self.canvas.fill(LEVEL_SELECT['bg-color'])
+        if 'panel_rect' not in self.level_ui or not self.level_ui['rects']:
+            self.layout_level_buttons()
+        panel_rect = self.level_ui['panel_rect']
+        rects = self.level_ui['rects']
+        title_font = pygame.font.Font(LEVEL_BUTTON['font'], min(LEVEL_BUTTON['font-size'] + 6, 40))
+        title_surf = title_font.render('Select Difficulty', True, (0, 0, 0))
+        title_rect = title_surf.get_rect()
+        title_rect.centerx = panel_rect.centerx
+        title_rect.bottom = panel_rect.top + 48
+        self.canvas.blit(title_surf, title_rect)
+        btn_font = pygame.font.Font(LEVEL_BUTTON['font'], min(LEVEL_BUTTON['font-size'], LEVEL_BUTTON['height'] - 8))
+        for i, (opt, r) in enumerate(zip(LEVEL_OPTIONS, rects)):
+            st = self.select_button_state[i] if i < len(self.select_button_state) else 'normal'
+            if st == 'hover':
+                bg = LEVEL_BUTTON['bg-color-hover']
+            elif st == 'active':
+                bg = LEVEL_BUTTON['bg-color-active']
+            else:
+                bg = LEVEL_BUTTON['bg-color']
+            pygame.draw.rect(self.canvas, bg, r, border_radius=LEVEL_BUTTON['radius'])
+            pygame.draw.rect(self.canvas, (120, 120, 120), r, width=1, border_radius=LEVEL_BUTTON['radius'])
+            txt = btn_font.render(opt['label'], True, LEVEL_BUTTON['color'])
+            txt_rect = txt.get_rect(center=r.center)
+            self.canvas.blit(txt, txt_rect)
+
+    # Draw mode select
+    def layout_mode_buttons(self):
+        cw, ch = self.canvas.get_size()
+        panel_w = min(MODE_SELECT['width'], cw)
+        panel_h = min(MODE_SELECT['height'], ch)
+        panel_x = (cw - panel_w) // 2
+        panel_y = (ch - panel_h) // 2
+        self.mode_ui['panel_rect'] = pygame.Rect(panel_x, panel_y, panel_w, panel_h)
+        bw = min(MODE_BUTTON['width'], panel_w - 2 * MODE_BUTTON['margin'])
+        bh = MODE_BUTTON['height']
+        gap_y = MODE_BUTTON['margin']
+        total_h = len(MODE_OPTIONS) * bh + (len(MODE_OPTIONS) - 1) * gap_y
+        start_y = panel_y + (panel_h - total_h) // 2
+        rects = []
+        for i in range(len(MODE_OPTIONS)):
+            rx = panel_x + (panel_w - bw) // 2
+            ry = start_y + i * (bh + gap_y)
+            rects.append(pygame.Rect(rx, ry, bw, bh))
+        self.mode_ui['rects'] = rects
+
+    def draw_mode_select(self):
+        self.canvas.fill(MODE_SELECT['bg-color'])
+        if 'panel_rect' not in self.mode_ui or not self.mode_ui['rects']:
+            self.layout_mode_buttons()
+        panel_rect = self.mode_ui['panel_rect']
+        rects = self.mode_ui['rects']
+        title_font = pygame.font.Font(MODE_BUTTON['font'], min(MODE_BUTTON['font-size'] + 6, 40))
+        title_surf = title_font.render('Select Mode', True, (0, 0, 0))
+        title_rect = title_surf.get_rect()
+        title_rect.centerx = panel_rect.centerx
+        title_rect.bottom = panel_rect.top + 48
+        self.canvas.blit(title_surf, title_rect)
+        btn_font = pygame.font.Font(MODE_BUTTON['font'], min(MODE_BUTTON['font-size'], MODE_BUTTON['height'] - 8))
+        for i, (opt, r) in enumerate(zip(MODE_OPTIONS, rects)):
+            st = self.mode_button_state[i] if i < len(self.mode_button_state) else 'normal'
+            if st == 'hover':
+                bg = MODE_BUTTON['bg-color-hover']
+            elif st == 'active':
+                bg = MODE_BUTTON['bg-color-active']
+            else:
+                bg = MODE_BUTTON['bg-color']
+            pygame.draw.rect(self.canvas, bg, r, border_radius=MODE_BUTTON['radius'])
+            pygame.draw.rect(self.canvas, (120, 120, 120), r, width=1, border_radius=MODE_BUTTON['radius'])
+            txt = btn_font.render(opt['label'], True, MODE_BUTTON['color'])
+            txt_rect = txt.get_rect(center=r.center)
+            self.canvas.blit(txt, txt_rect)
+
+    # Calc functions
     def is_mouse_in_board(self, x, y):
         width, height = self.canvas.get_size()
         return BOARD['padding'] + BOARD['gap'] <= x <= width - BOARD['padding'] \

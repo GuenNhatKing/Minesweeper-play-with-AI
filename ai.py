@@ -7,11 +7,11 @@ class Action(Enum):
     FLAG = 'flag'
 
 class AI:
-    def __init__(self, game: Game):
-        self.game = game  
+    def __init__(self):
+        self.game: Game = None  
         self.actions: set[tuple[tuple[int, int], Action]] = set()
         self.frontier: set[tuple[int, int]] = set()
-        self.snapshot: list[list[CellState]] = [[self.game.get_cell(i, j).state for i in range(self.game.w)] for j in range(self.game.h)]
+        self.snapshot: list[list[CellState]] = None
         
     def check_rule_1(self, x, y):
         mines_count = self.game.adjacent_mines(x, y)
