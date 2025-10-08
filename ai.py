@@ -50,30 +50,11 @@ class AI:
                 for x, y in self.game.unshared_neighbors(xa, ya, xb, yb):
                     if self.game.get_cell(x, y).state == CellState.UNPROBED:
                         self.actions.append(((x, y), Action.PROBE))
-                return True
-        return False
-
-    def check_rule_4(self, xa, ya):
-        mines_A_count = self.game.adjacent_mines(xa, ya)
-        for xb, yb in self.game.neighbors(xa, ya, 2):
-            if self.game.get_cell(xb, yb).state != CellState.PROBED:
-                continue
-            mines_B_count = self.game.adjacent_mines(xb, yb)
-            unprobed_count = 0
-            flags_count = 0
-            for x, y in self.game.unshared_neighbors(xb, yb, xa, ya):
-                if self.game.get_cell(x, y).state == CellState.UNPROBED:
-                    unprobed_count += 1
-                if self.game.get_cell(x, y).state == CellState.FLAGGED:
-                    flags_count += 1
-
-            if mines_A_count == (mines_B_count - unprobed_count - flags_count):  
                 for x, y in self.game.unshared_neighbors(xb, yb, xa, ya):
                     if self.game.get_cell(x, y).state == CellState.UNPROBED:
                         self.actions.append(((x, y), Action.FLAG))
                 return True
         return False
-
 
     def infer(self):
         if not self.game.state == GameState.PLAYING:
@@ -88,7 +69,6 @@ class AI:
                 self.check_rule_1(x, y)
                 self.check_rule_2(x, y)
                 self.check_rule_3(x, y)
-                self.check_rule_4(x, y)
     
     def make_move(self):
         if self.game.state == GameState.INITIALIZED:
