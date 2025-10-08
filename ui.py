@@ -103,7 +103,7 @@ class UI_Draw:
         for j in range(h):
             offset_x = board_offset_x + BOARD['gap']
             for i in range(w):
-                state = self.game.get_cell_state(i, j)
+                state = self.game.get_cell(i, j).state
                 cell_rect = pygame.Rect(offset_x, offset_y, CELL['size'], CELL['size'])
                 offset_x += CELL['size'] + BOARD['gap']
 

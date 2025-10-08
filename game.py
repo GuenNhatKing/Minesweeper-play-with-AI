@@ -3,6 +3,7 @@ import pygame
 from config import *
 from core import Game, GameState, CellState
 from ui import UI_Draw
+from ai import AI
 
 def get_work_area_size():
     if not pygame.display.get_init():
@@ -22,6 +23,7 @@ class Game_UI:
         self.max_width, self.max_height = get_work_area_size()
         self.rows, self.cols, self.mines = parse_level(level.value)
         self.game = Game(self.rows, self.cols, self.mines)
+        self.ai = AI(self.game)
         self.cell_size = CELL['size']
     
     def reset_game(self):
@@ -47,7 +49,7 @@ class Game_UI:
                 self.ui_draw.in_board_right_clicked = False
 
         pos_x, pos_y = self.get_clicked_cell(x, y)
-        if pos_x != None and pos_y != None and self.game.get_cell_state(pos_x, pos_y) == CellState.UNPROBED:
+        if pos_x != None and pos_y != None and self.game.get_cell(pos_x, pos_y).state == CellState.UNPROBED:
             self.ui_draw.clicked_unprobed_cell = True
         else:
             self.ui_draw.clicked_unprobed_cell = False
@@ -80,7 +82,7 @@ class Game_UI:
             elif pygame.mouse.get_pressed()[2]:
                 self.ui_draw.in_board_right_clicked = True
             pos_x, pos_y = self.get_clicked_cell(x, y)
-            if pos_x != None and pos_y != None and self.game.get_cell_state(pos_x, pos_y) == CellState.UNPROBED:
+            if pos_x != None and pos_y != None and self.game.get_cell(pos_x, pos_y).state == CellState.UNPROBED:
                     self.ui_draw.clicked_unprobed_cell = True
         elif self.ui_draw.is_mouse_in_smiley_button(x, y):
             self.ui_draw.smiley_clicked = True
@@ -137,6 +139,7 @@ class Game_UI:
             scaled_surface = pygame.transform.smoothscale(self.canvas, (self.width, self.height))
             windows.blit(scaled_surface, (0, 0))
             pygame.display.update()
+            self.ai.make_move()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -154,5 +157,5 @@ class Game_UI:
 
         pygame.quit()
 
-game_ui = Game_UI(level=Level.EASY)
+game_ui = Game_UI(level=Level.HARD)
 game_ui.start_ui()
