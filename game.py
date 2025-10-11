@@ -195,10 +195,10 @@ class Game_UI:
                         self.ui_draw.mode_button_state[i] = 'hover'
                     if i == 0:
                         self.set_ai_helper(False)
-                        print('player')
+                        print('MODE.Player')
                     elif i == 1:
                         self.set_ai_helper(True)
-                        print('ai')
+                        print('MODE.AI')
 
                     self.set_template(Template.GAMEPLAY)
 

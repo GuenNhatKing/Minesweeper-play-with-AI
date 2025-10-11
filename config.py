@@ -66,8 +66,7 @@ LEVEL_BUTTON = {
 LEVEL_OPTIONS: list = []
 for i in Level:
     LEVEL_OPTIONS.append({'key': i, 'label': f'{i.value} ({LEVEL_CONFIG[i]['rows']}x{LEVEL_CONFIG[i]['cols']}, {LEVEL_CONFIG[i]['mines']})'})
-for i in LEVEL_OPTIONS:
-    print(i)
+
 MODE_SELECT = {
     'bg-color': (171, 171, 171),
     'width': 400,
