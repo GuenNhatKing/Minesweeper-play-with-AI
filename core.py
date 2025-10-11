@@ -1,5 +1,4 @@
 from enum import Enum
-from levels import parse_level
 import random
 from timer import Timer
 from dataclasses import dataclass

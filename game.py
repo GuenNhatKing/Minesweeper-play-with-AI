@@ -1,4 +1,4 @@
-from levels import parse_level, Level
+from levels import get_level_config, Level
 import pygame
 from config import *
 from core import Game, GameState, CellState
@@ -11,8 +11,8 @@ def get_work_area_size():
         pygame.display.init()
     
     info = pygame.display.Info()
-    width = info.current_w * 0.8
-    height = info.current_h * 0.8
+    width = info.current_w * 0.86
+    height = info.current_h * 0.86
     return width, height
 
 class Template(Enum):
@@ -51,7 +51,7 @@ class Game_UI:
     
     def set_level(self, level: Level):
         if self.level != level:
-            self.game_config = parse_level(level.value)
+            self.game_config = get_level_config(level)
             if self.game:
                 self.game = Game(self.game_config[0], self.game_config[1], self.game_config[2])
             else:
@@ -184,12 +184,8 @@ class Game_UI:
                 if rect.collidepoint((x, y)):
                     if self.ui_draw.select_button_state[i] == 'active':
                         self.ui_draw.select_button_state[i] = 'hover'
-                    if i == 0:
-                        self.set_level(Level.EASY)
-                    elif i == 1:
-                        self.set_level(Level.MEDIUM)
-                    elif i == 2:
-                        self.set_level(Level.HARD)
+                    print(LEVEL_OPTIONS[i]['key'])
+                    self.set_level(LEVEL_OPTIONS[i]['key'])
                     self.set_template(Template.MODE_SELECT)
 
         elif self.template == Template.MODE_SELECT:

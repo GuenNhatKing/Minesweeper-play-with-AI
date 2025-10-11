@@ -1,10 +1,12 @@
 from enum import Enum
 
 class Level(Enum):
-    EASY = 'easy'
-    MEDIUM = 'medium'
-    HARD = 'hard'
-    CUSTOM = 'custom'
+    EASY = 'Easy'
+    MEDIUM = 'Medium'
+    HARD = 'Hard'
+    EXPERT = 'Expert'
+    MASTER = 'Master'
+    LEGEND = 'Legend'
 
 LEVEL_CONFIG = {
     Level.EASY: {
@@ -22,11 +24,21 @@ LEVEL_CONFIG = {
         "rows": 16,
         "cols": 30
     },
-    Level.CUSTOM: {
-        "mines": 0,
-        "rows": 0,
-        "cols": 0
-    }
+    Level.EXPERT: {
+        "mines": 150,
+        "rows": 20,
+        "cols": 35
+    },
+    Level.MASTER: {
+        "mines": 220,
+        "rows": 24,
+        "cols": 40
+    },
+    Level.LEGEND: {
+        "mines": 300,
+        "rows": 30,
+        "cols": 50
+    },
 }
 
 def get_level_config(level: Level) -> tuple[int, int, int]:
@@ -35,20 +47,3 @@ def get_level_config(level: Level) -> tuple[int, int, int]:
     """
     config = LEVEL_CONFIG[level]
     return config["rows"], config["cols"], config["mines"]
-
-def parse_level(name: str, custom: tuple[int, int, int] = None) -> tuple[int, int, int]:
-    """
-    Parse từ string -> (rows, cols, mines)
-    Ví dụ: 'easy', 'medium', 'hard', 'custom'
-    Nếu custom thì cần truyền vào tuple (rows, cols, mines)
-    """
-    name = name.strip().lower()
-    try:
-        level = Level(name)
-    except ValueError:
-        raise ValueError(f"Invalid level name: {name}")
-    if level == Level.CUSTOM:
-        if custom is None:
-            raise ValueError("Custom level requires (rows, cols, mines) tuple")
-        return custom
-    return get_level_config(level)

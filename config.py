@@ -1,3 +1,4 @@
+from levels import Level, LEVEL_CONFIG
 FONT = {
     'helvetica': 'assets/fonts/Helvetica.ttf',
     'helvetica-bold': 'assets/fonts/Helvetica-Bold.ttf'
@@ -62,12 +63,11 @@ LEVEL_BUTTON = {
     'radius': 8
 }
 
-LEVEL_OPTIONS = [
-    {'key': 'EASY', 'label': 'Easy (9x9, 10)'},
-    {'key': 'MEDIUM', 'label': 'Medium (16x16, 40)'},
-    {'key': 'HARD', 'label': 'Hard (30x16, 99)'},
-]
-
+LEVEL_OPTIONS: list = []
+for i in Level:
+    LEVEL_OPTIONS.append({'key': i, 'label': f'{i.value} ({LEVEL_CONFIG[i]['rows']}x{LEVEL_CONFIG[i]['cols']}, {LEVEL_CONFIG[i]['mines']})'})
+for i in LEVEL_OPTIONS:
+    print(i)
 MODE_SELECT = {
     'bg-color': (171, 171, 171),
     'width': 400,

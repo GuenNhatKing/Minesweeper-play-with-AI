@@ -1,5 +1,4 @@
-from core import Game, GameState, CellState, Cell
-from levels import parse_level, Level
+from core import Game, GameState, CellState
 from enum import Enum
 
 class Action(Enum):
