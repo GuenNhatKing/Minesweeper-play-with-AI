@@ -13,7 +13,7 @@ A Python-based Minesweeper game application with AI assistance to help players s
 ## ✨ Features
 
 ### 🎯 Classic Minesweeper Game
-- **3 difficulty levels**: Easy (9x9, 10 mines), Medium (16x16, 40 mines), Hard (30x16, 99 mines)
+- **6 difficulty levels**: Easy, Medium, Hard, Expert, Master, Legend
 - **Graphical interface**: Built with Pygame featuring an attractive UI
 - **Timer**: Game time tracking
 - **Mine counter**: Display remaining mine count
@@ -69,9 +69,12 @@ deactivate
 ## 🎮 How to Play
 
 ### 1. Select Difficulty
-- **Easy**: 9x9 with 10 mines - Perfect for beginners
-- **Medium**: 16x16 with 40 mines - Intermediate challenge
-- **Hard**: 30x16 with 99 mines - Expert level challenge
+- **Easy**: 9x9 with 10 mines – Perfect for beginners learning the basics.
+- **Medium**: 16x16 with 40 mines – A balanced challenge for intermediate players.
+- **Hard**: 30x16 with 99 mines – Designed for experienced players seeking a real test of skill.
+- **Expert**: 35x20 with 150 mines – A serious challenge for advanced players.
+- **Master**: 40x24 with 220 mines – Extremely difficult, only for true strategists.
+- **Legend**: 50x30 with 300 mines – The ultimate difficulty level, not for the faint of heart.
 
 ### 2. Select Game Mode
 - **Player**: Manual play without assistance
