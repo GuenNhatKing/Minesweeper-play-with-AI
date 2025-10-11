@@ -1,4 +1,3 @@
-<div id="top">
 <div align="center">
 
 <img src="icon.png" width="200" alt="Minesweeper AI Logo"/>
@@ -8,7 +7,9 @@
 A Python-based Minesweeper game application with AI assistance to help players solve the puzzle.
 
 </div>
+
 ---
+
 ## ✨ Features
 
 ### 🎯 Classic Minesweeper Game
